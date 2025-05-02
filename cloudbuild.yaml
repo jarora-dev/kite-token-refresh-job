@@ -1,4 +1,6 @@
 # cloudbuild.yaml ─ CI/CD for token‑refresher
+logging: CLOUD_LOGGING_ONLY
+
 substitutions:
   _REGION: asia-south1
   _REPOSITORY: kite-token-refresh-job
