@@ -44,12 +44,7 @@ steps:
           --tasks=1 --max-retries=1 \
           --cpu=1 --memory=512Mi \
           --service-account=trading-sa@${_PROJECT_ID}.iam.gserviceaccount.com \
-          --set-secrets=KITE_API_KEY=projects/${_PROJECT_ID}/secrets/kite_api_key:latest:env,\
-          KITE_API_SECRET=projects/${_PROJECT_ID}/secrets/kite_api_secret:latest:env,\
-          KITE_USER_ID=projects/${_PROJECT_ID}/secrets/kite_user_id:latest:env,\
-          KITE_PASSWORD=projects/${_PROJECT_ID}/secrets/kite_password:latest:env,\
-          KITE_TOTP_SECRET=projects/${_PROJECT_ID}/secrets/kite_totp_secret:latest:env,\
-          ACCESS_SECRET_NAME=projects/${_PROJECT_ID}/secrets/kite_access_token:latest:env \
+          --set-secrets=KITE_API_KEY=projects/${_PROJECT_ID}/secrets/kite_api_key:latest:env,KITE_API_SECRET=projects/${_PROJECT_ID}/secrets/kite_api_secret:latest:env,KITE_USER_ID=projects/${_PROJECT_ID}/secrets/kite_user_id:latest:env,KITE_PASSWORD=projects/${_PROJECT_ID}/secrets/kite_password:latest:env,KITE_TOTP_SECRET=projects/${_PROJECT_ID}/secrets/kite_totp_secret:latest:env,ACCESS_SECRET_NAME=projects/${_PROJECT_ID}/secrets/kite_access_token:latest:env
           --quiet
 
 images:
