@@ -1,0 +1,50 @@
+name: token-refresh-trigger
+description: Trigger for Cloud Build CI/CD of token refresher
+repository:
+  name: kite-token-refresh-job
+  owner: tinarora1992
+  provider: GITHUB
+  connection: projects/zerodha-algo-trading-297611/locations/global/connections/github
+filter:
+  branch: "^main$"
+build:
+  serviceAccount: trading-sa@zerodha-algo-trading-297611.iam.gserviceaccount.com
+  steps:
+    - name: gcr.io/cloud-builders/docker
+      args:
+        [
+          "build",
+          "-t",
+          "asia-south1-docker.pkg.dev/zerodha-algo-trading-297611/kite-token-refresh-job/token-refresher:latest",
+          "-t",
+          "asia-south1-docker.pkg.dev/zerodha-algo-trading-297611/kite-token-refresh-job/token-refresher:$SHORT_SHA",
+          ".",
+        ]
+    - name: gcr.io/cloud-builders/docker
+      args:
+        [
+          "push",
+          "asia-south1-docker.pkg.dev/zerodha-algo-trading-297611/kite-token-refresh-job/token-refresher:latest",
+        ]
+    - name: gcr.io/cloud-builders/docker
+      args:
+        [
+          "push",
+          "asia-south1-docker.pkg.dev/zerodha-algo-trading-297611/kite-token-refresh-job/token-refresher:$SHORT_SHA",
+        ]
+    - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+      entrypoint: bash
+      args:
+        - "-c"
+        - |
+          gcloud beta run jobs deploy kite-token-job \
+            --region=asia-south1 \
+            --image=asia-south1-docker.pkg.dev/zerodha-algo-trading-297611/kite-token-refresh-job/token-refresher:$SHORT_SHA \
+            --task-timeout=15m \
+            --tasks=1 --max-retries=1 \
+            --cpu=1 --memory=512Mi \
+            --service-account=trading-sa@zerodha-algo-trading-297611.iam.gserviceaccount.com \
+            --set-secrets=KITE_API_KEY=projects/zerodha-algo-trading-297611/secrets/kite_api_key:latest:env,KITE_API_SECRET=projects/zerodha-algo-trading-297611/secrets/kite_api_secret:latest:env,KITE_USER_ID=projects/zerodha-algo-trading-297611/secrets/kite_user_id:latest:env,KITE_PASSWORD=projects/zerodha-algo-trading-297611/secrets/kite_password:latest:env,KITE_TOTP_SECRET=projects/zerodha-algo-trading-297611/secrets/kite_totp_secret:latest:env,ACCESS_SECRET_NAME=projects/zerodha-algo-trading-297611/secrets/kite_access_token:latest:env \
+            --quiet
+  options:
+    logging: CLOUD_LOGGING_ONLY
